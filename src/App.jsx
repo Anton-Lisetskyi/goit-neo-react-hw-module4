@@ -95,8 +95,9 @@ function App() {
       )}
       {selectedImage && (
         <ImageModal
-          image={selectedImage}
+          isOpen={!!selectedImage}
           onClose={() => setSelectedImage(null)}
+          image={selectedImage}
         />
       )}
       {loading && <Loader />}

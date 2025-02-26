@@ -1,45 +1,49 @@
-import { useEffect, useState } from "react";
+import Modal from "react-modal";
 import PropTypes from "prop-types";
 import styles from "./ImageModal.module.css";
 
-const ImageModal = ({ image, onClose }) => {
-  const [isVisible, setIsVisible] = useState(false);
+Modal.setAppElement("#root");
 
-  useEffect(() => {
-    if (image) {
-      setIsVisible(true);
-    }
-  }, [image]);
-
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      setIsVisible(false);
-      setTimeout(() => onClose(), 300);
-    }
-  };
-
-  if (!image) return null;
-
+const ImageModal = ({ isOpen, onClose, image }) => {
   return (
-    <div
-      className={`${styles.modalOverlay} ${isVisible ? styles.show : ""}`}
-      onClick={handleOverlayClick}
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      className={styles.modal}
+      overlayClassName={styles.overlay}
+      shouldCloseOnEsc={true}
+      shouldCloseOnOverlayClick={true}
     >
-      <div className={styles.modalContent}>
-        <img src={image.urls.regular} alt={image.alt_description} />
-      </div>
-    </div>
+      {image && (
+        <div className={styles.content}>
+          <img
+            src={image.urls.regular}
+            alt={image.alt_description || "Image"}
+            className={styles.image}
+          />
+          <button className={styles.closeButton} onClick={onClose}>
+            ✖
+          </button>
+        </div>
+      )}
+    </Modal>
   );
 };
 
 ImageModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
   image: PropTypes.shape({
     urls: PropTypes.shape({
       regular: PropTypes.string.isRequired,
     }).isRequired,
     alt_description: PropTypes.string,
+    user: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+    }).isRequired,
+    likes: PropTypes.number.isRequired,
+    description: PropTypes.string,
   }),
-  onClose: PropTypes.func.isRequired,
 };
 
 export default ImageModal;
